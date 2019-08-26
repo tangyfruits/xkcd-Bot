@@ -54,7 +54,7 @@ def send_message_xkcd(recipient_id, message_text):
     #need to get xkcd cd json links
     url_head = "http://xkcd.com/"
     url_tail = "/info.0.json"
-    random_int = str(random.randint(1,1750))
+    random_int = str(random.randint(1,2192))
     response = urllib2.urlopen(url_head + random_int + url_tail)
     xkcd_data = json.load(response)
     params = {
