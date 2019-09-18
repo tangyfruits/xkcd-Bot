@@ -4,6 +4,7 @@ import json
 import urllib2
 import requests
 import random
+from bs4 import BeautifulSoup
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -54,8 +55,8 @@ def send_message_xkcd(recipient_id, message_text):
     #need to get xkcd cd json links
     url_head = "http://xkcd.com/"
     url_tail = "/info.0.json"
-    random_int = str(random.randint(1,2192))
-    response = urllib2.urlopen(url_head + random_int + url_tail)
+    #random_int = str(random.randint(1,get_xkcd_latest()))
+    response = urllib2.urlopen(url_head + get_xkcd_latest() + url_tail)
     xkcd_data = json.load(response)
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
@@ -97,6 +98,13 @@ def send_message_xkcd(recipient_id, message_text):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
+        
+def get_xkcd_latest():
+    soup = BeautifulSoup(requests.get('http://www.xkcd.com').text, 'html.parser')
+    xkcdid = soup.find("meta",  property="og:url")
+    return str(xkcdid).split("/")[3]
+ 
+        
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
